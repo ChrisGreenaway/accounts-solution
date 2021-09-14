@@ -1,0 +1,42 @@
+Developed with Rust 1.55.0 on Windows
+
+Basics
+======
+Formatting via cargo fmt with default options.
+Linting via cargo clippy --all-targets.
+Parsing command line arguments - as long as there is at least one argument, for the file, the execution will proceed.
+
+Completeness
+============
+All cases should be covered.
+
+Correctness
+===========
+Testing via cargo test.
+There are unit tests and also integration tests that run using the binary.
+The integration tests process the various .csv files in the tests directory.
+
+Safety and Robustness
+=====================
+Errors are dealt with in one of two ways: returning a non-zero exit code with error on stderr; or ignoring it.
+Failure to interact with the filesystem results in a std::io::Error printed to stderr and a non-zero exit code.
+Data errors in the file are ignored.
+Data errors include things such as:
+ * bad headers
+ * records that cannot be read
+ * records that makes no sense - such as a dispute on a non-existent transaction or a transaction for the wrong client
+Ignoring bad data like this means that processing a very large file of mostly good data is not halted.
+Typically other processes can detect errors where all the data is corrupted - such as detecting the output is empty / very short.
+
+Efficiency
+==========
+Uses a two-pass approach - trading slower processing time (roughly half the speed) for substantially lower memory consumption.
+In the first pass through the file, we read which transactions are being disputed.
+This means that in the second pass through the file, we can discard any transactions we know are not disputed, once they are processed.
+Overall memory consumption is proportional to the number of clients - and that's limited by the maximum value of a u16.
+
+Maintainability
+===============
+Separation of input/output and execution in the tests makes them simple to reason about
+Code separated into modules, with some visibility defined
+Code is reasonably DRY - without going over the top on this

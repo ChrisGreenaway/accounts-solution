@@ -1,0 +1,14 @@
+[package]
+name = "accounts-solution"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+csv = "1.1"
+rust_decimal = { version = "1.15", features = ["serde-str"] }
+serde = { version = "1.0", features = ["derive"] }
+
+[dev-dependencies]
+test_bin = "0.3.0"
