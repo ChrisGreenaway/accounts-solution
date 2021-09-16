@@ -132,11 +132,11 @@ fn stderr(output: &Output) -> Cow<str> {
 }
 
 fn expect(lines: Vec<&str>) -> String {
-    let mut expect = String::from("client,available,held,total,locked\n");
+    let mut expect = String::from("client,available,held,total,locked\r\n");
 
     for line in lines {
         expect.push_str(line);
-        expect.push('\n');
+        expect.push_str("\r\n");
     }
 
     expect

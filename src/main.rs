@@ -2,7 +2,7 @@ mod account;
 mod processor;
 mod transaction;
 
-use csv::{ReaderBuilder, Trim, Writer};
+use csv::{ReaderBuilder, Terminator, Trim, WriterBuilder};
 use processor::TransactionProcessor;
 use std::fs::File;
 use std::io::ErrorKind;
@@ -32,7 +32,9 @@ fn process_file(
 
 fn write_accounts(transaction_processor: TransactionProcessor) -> Result<(), std::io::Error> {
     // For an empty input file, this produces an empty output file (i.e. no headers) - is this OK?
-    let mut writer = Writer::from_writer(std::io::stdout());
+    let mut writer = WriterBuilder::new()
+        .terminator(Terminator::CRLF)
+        .from_writer(std::io::stdout());
     for account in transaction_processor.into_accounts().values() {
         writer.serialize(account)?;
     }

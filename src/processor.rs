@@ -46,7 +46,6 @@ impl TransactionProcessor {
 
 fn is_disputable(transaction: &Transaction) -> bool {
     transaction.r#type == TransactionType::Deposit
-        || transaction.r#type == TransactionType::Withdrawal
 }
 
 #[cfg(test)]
@@ -234,6 +233,28 @@ mod tests {
         test.chargeback(2, 1);
         test.expected(1, "0", "10", "10", false);
         test.expected(2, "20", "0", "20", false);
+        test.run();
+    }
+
+    #[test]
+    fn dispute_withdrawal() {
+        let mut test = TransactionTest::new();
+        test.deposit(1, 1, "50.0");
+        test.withdrawl(1, 2, "10.0");
+        test.dispute(1, 2);
+        test.expected(1, "40", "0", "40", false);
+        test.run();
+    }
+
+    #[test]
+    fn misordered_transactions() {
+        let mut test = TransactionTest::new();
+        test.withdrawl(1, 2, "10.0");
+        test.deposit(1, 1, "50.0");
+        test.dispute(1, 2);
+        test.deposit(1, 3, "20.0");
+        test.resolve(1, 2);
+        test.expected(1, "60", "0", "60", false);
         test.run();
     }
 
